@@ -39,9 +39,12 @@ class NewVisitorTest(LiveServerTestCase):
         # She types "Buy peacock feathers" into a textbox
         inputbox.send_keys('Buy peacock feathers')
 
-        # When she hits enter, the page updates, and now the page lists
+        # When she hits enter, she is taken to a new URL, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list
         inputbox.send_keys(Keys.ENTER)
+
+        list_url1 = self.browser.current_url
+        self.assertRegex(list_url1, '/lists/.+')
 
         self.check_for_row_in_list_table('1: Buy peacock feathers')
 
@@ -55,12 +58,34 @@ class NewVisitorTest(LiveServerTestCase):
         self.check_for_row_in_list_table('1: Buy peacock feathers')
         self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
 
-        # She wonders whether the site remembers her list. Then she sees
-        # that the site has generated a unique URL for her -- there is some
-        # explanatory text to that effect.
-        self.fail('Finish the test!')
+        # Now another user comes along to the site
 
-        # She visits that URL - her to-do list is still there
+        ## We use a new browser session to make sure that no information
+        ## of the first user is comming trough from cookies etc.
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
 
-        # Satisfied she goes back to sleep
+        # He visits home page. There is no sign of previous user's list.
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertNotIn('make a fly', page_text)
+
+        # He starts a new list by entering a new item. He is less interested
+        # than the previous user...
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.ENTER)
+
+        # He gets his own unique URL
+        list_url2 = self.browser.current_url
+        self.assertRegex(list_url2, '/lists/.+')
+        self.assertNotEqual(list_url2, list_url1)
+
+        # Again, there is no trace of the previous user's list
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertIn('Buy milk', page_text)
+
+        # Satisfied, they both go back to sleep
 
