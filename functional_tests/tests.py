@@ -19,7 +19,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        if cls.server_url == cls.live_server_url:
+        if hasattr(cls, 'server_thread'):
             super().tearDownClass()
 
 
