@@ -50,7 +50,7 @@ def update_settings(source_folder, site_name):
 
 def update_wsgi(source_folder, user_name):
     wsgi_conf_file = "/var/www/%s_pythonanywhere_com_wsgi.py" % (user_name,)
-    s  = "echo \"import path\n"
+    s  = "echo \"import sys\n"
     s += "path = '%s'\n"
     s += "if path not in sys.path:\n"
     s += "    sys.path.append(path)\n\" > '%s'"
