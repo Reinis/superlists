@@ -28,7 +28,7 @@ def create_directory_structure_if_necessary(site_folder):
 
 def get_latest_source(source_folder):
     with lcd(source_folder):
-        if os.path.exists('.git'):
+        if os.path.exists(source_folder + '/.git'):
             local('git reset --hard')
             local('git pull')
         else:
