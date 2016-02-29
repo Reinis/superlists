@@ -39,7 +39,7 @@ def get_latest_source(source_folder):
 def update_settings(source_folder, site_name):
     settings_path = source_folder + '/superlists/settings.py'
     local("sed -e 's#DEBUG = True#DEBUG = False#' -i '%s'" % (settings_path,))
-    local("sed -e 's#ALLOWED_HOSTS =.*$#ALLOWED_HOSTS = \[\"%s\"\]#' -i '%s'" % (site_name, settings_path))
+    local("sed -e 's#DOMAIN = \"localhost\"#DOMAIN = \"%s\"#' -i '%s'" % (site_name, settings_path))
     secret_key_file = source_folder + '/superlists/secret_key.py'
     if not os.path.exists(secret_key_file):
         chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
